@@ -12,7 +12,7 @@ The primary objective of this project is to model the perceived quality of indep
 ## 2. Models Used and Justification
 To fulfill the requirement of moving beyond baseline templates, multiple algorithm families were employed and evaluated against each other:
 * **Regression Models:**
-  * *Linear Baselines (Linear Regression, Ridge, Lasso):* Deployed to establish a performance floor and assess baseline linear relationships. Ridge and Lasso add L2 and L1 regularization respectively, which proved critical given the low signal-to-noise ratio of the dataset.
+  * *Linear Baselines (Linear Regression, Ridge, ElasticNet, Lasso):* Deployed to establish a performance floor and assess baseline linear relationships. Ridge and Lasso add L2 and L1 regularization respectively; ElasticNet combines both penalties. All three proved critical given the low signal-to-noise ratio of the dataset.
   * *Ensemble Models (Decision Tree, Random Forest, Gradient Boosting):* Tree-based methods were introduced to capture potential non-linear interactions between features. After systematic hyperparameter tuning, **Tuned Random Forest** achieved the highest test R² (0.1368) and was selected as the final model. XGBoost was added as a supplementary extension to enable SHAP interpretability analysis.
 * **Time Series Models:**
   * *ARIMA & STL Decomposition:* Utilized as standard baseline algorithms to isolate trend, seasonality, and residual noise from autocorrelation.
@@ -22,16 +22,17 @@ To fulfill the requirement of moving beyond baseline templates, multiple algorit
 
 ### 3.1 Regression — Full Model Comparison
 
-Six regression algorithms were trained and evaluated. Cross-validation (5-fold) was used as the primary performance criterion to guard against overfitting on the small test set (n ≈ 180 after the ≥10-review filter).
+Seven regression algorithms were trained and evaluated. Cross-validation (5-fold) was used as the primary performance criterion to guard against overfitting on the small test set (n ≈ 180 after the ≥10-review filter).
 
 | Model | CV R² (mean ± std) | Stability Assessment |
 |---|---|---|
 | Linear Regression | 0.0736 ± 0.0312 | Stable |
 | Ridge Regression | 0.0736 ± 0.0311 | Stable |
-| Lasso Regression | 0.0629 ± 0.0163 | **Most stable** |
+| **ElasticNet** | **0.0747 ± 0.0209** | **Most stable** |
+| Lasso Regression | 0.0629 ± 0.0163 | Stable |
 | Decision Tree | -0.4545 ± 0.1775 | Severe overfitting |
-| Random Forest | -0.0173 ± 0.0718 | High variance |
-| Gradient Boosting | -0.1097 ± 0.0898 | High variance |
+| Random Forest | -0.0174 ± 0.0722 | High variance |
+| Gradient Boosting | -0.1099 ± 0.0901 | High variance |
 
 A counter-intuitive result emerged: **simple linear models outperformed tree-based ensembles in cross-validation**. This pattern, where non-parametric models overfit on low-signal tabular data, is well-documented in the machine learning literature.
 
